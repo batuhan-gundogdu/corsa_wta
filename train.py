@@ -39,7 +39,7 @@ parser.add_argument('--num_units', type = int, default=64, metavar ='K',
                      help='number of acoustic units in clustering')
 parser.add_argument('--embedding_dim', type=int, default = 128, 
                      help='dimension of the hidden layer(s)')
-parser.add_argument('--epochs', type = int, default=10, 
+parser.add_argument('--epochs', type = int, default=20, 
                      help='number of epochs')
 parser.add_argument('--seed', type=int, default = 42, 
                      help='set seed for reproducibility')
@@ -68,7 +68,15 @@ opt = vars(args)
 print('loading the data from folder')
 dataset, data_dict, speaker_ids = data.load(opt['data_dir'])
 
-num_speakers = max(speaker_ids) # Although it works for now, this might not be the case, check later
+num_speakers = len(np.unique(speaker_ids))
+vals = np.unique(speaker_ids)
+keys = np.arange(0,(num_speakers))
+id_map = mapping = dict(zip(vals, keys))
+speaker_ids2 = speaker_ids
+
+for i in range(speaker_ids.shape[0]):
+	speaker_ids2[i] = id_map[speaker_ids[i]]
+
 
 dataset = dataset[:, 0:DATA_DIM]
 for i in range(DATA_DIM):
@@ -90,12 +98,10 @@ else :
 dataset = fh.create_dataset(dataset, args.timesteps, args.timesteps)
 corr_a = fh.create_dataset(corr_a, args.timesteps_corsa, args.timesteps_corsa) 
 corr_b = fh.create_dataset(corr_b, args.timesteps_corsa, args.timesteps_corsa) 
-speaker_ids = fh.create_dataset_for_labels(speaker_ids, args.timesteps, args.timesteps)
+speaker_ids = fh.create_dataset_for_labels(speaker_ids2, args.timesteps, args.timesteps)
 
-val_portion = 0.1
-val_data_size = int(val_portion*len(dataset))
-train_x = dataset[:-val_data_size]
-train_sp = speaker_ids[:-val_data_size]
+train_x = dataset
+train_sp = speaker_ids
 
 train_data = TensorDataset(torch.from_numpy(train_x), torch.from_numpy(train_x), torch.from_numpy(train_sp))
 train_loader = DataLoader(train_data, shuffle = True, batch_size = args.batch_size, drop_last = True) 
@@ -134,11 +140,10 @@ for epoch in range(args.epochs) :
     else :
         if (epoch%3 == 0):
             print(colored("SA training",'magenta'))
-            #for x, _, z  in train_loader:
-
-                
-                #fc.train_disc(x, z, encoder, discriminator, 
-                #         discriminator_criterion,optimizer_disc, optimizer_enc, args.batch_size, args.alpha)        
+            for x, _, z  in train_loader:
+		
+                fc.train_disc(x, z, encoder, discriminator,
+                         discriminator_criterion,optimizer_disc, optimizer_enc, args.batch_size, args.alpha)
         elif (epoch%3 == 1):       
         
             print(colored("a -> b",'red'))

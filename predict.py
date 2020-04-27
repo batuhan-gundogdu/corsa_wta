@@ -54,6 +54,8 @@ for file in files:
     ctr+= 1
     filename = os.path.join(args.test_data_dir, file)
     test_utt = np.loadtxt(filename)
+	if len(test_utt.shape) == 1:
+			test_utt = test_utt.reshape(1, -1)
     current_max = -1
     matrix = torch.from_numpy(test_utt).to(device).float()
     matrix = matrix.view(1,test_utt.shape[0],test_utt.shape[-1])
