@@ -27,7 +27,7 @@ parser = argparse.ArgumentParser(description='Acoustic Unit Discovery with Corre
 
 parser.add_argument('--data_dir', type = str, 
                     help = 'location of the data corpus')
-parser.add_argument('--utd_pairs_dir', type = str, 
+parser.add_argument('--utd_pairs_dir', type = str, default = '/dataset',
                     help = 'location of the UTD pairs, file.dedups and file.nodes')
 parser.add_argument('--reg_weight', type=float, default=1.0,
                     help='weight of the L2-norm cost of the intermediate layer')
@@ -39,7 +39,7 @@ parser.add_argument('--num_units', type = int, default=64, metavar ='K',
                      help='number of acoustic units in clustering')
 parser.add_argument('--embedding_dim', type=int, default = 128, 
                      help='dimension of the hidden layer(s)')
-parser.add_argument('--epochs', type = int, default=20, 
+parser.add_argument('--epochs', type = int, default=18, 
                      help='number of epochs')
 parser.add_argument('--seed', type=int, default = 42, 
                      help='set seed for reproducibility')

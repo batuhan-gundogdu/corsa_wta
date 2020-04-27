@@ -27,7 +27,7 @@ parser.add_argument('--exp_name', type=str, default = 'temp',
 parser.add_argument('--drop_prob', type=float, default=0.0,
                     help='dropout for the decoder')
 args = parser.parse_args()
-OUTDIR = os.path.join('Results', args.exp_name)
+OUTDIR = os.path.join('Results', args.exp_name, 'english/test')
 args = parser.parse_args()
 device = model.which_device()
 fh.random_seed(args.seed)
@@ -54,8 +54,8 @@ for file in files:
     ctr+= 1
     filename = os.path.join(args.test_data_dir, file)
     test_utt = np.loadtxt(filename)
-	if len(test_utt.shape) == 1:
-			test_utt = test_utt.reshape(1, -1)
+    if len(test_utt.shape) == 1:
+       test_utt = test_utt.reshape(1, -1)
     current_max = -1
     matrix = torch.from_numpy(test_utt).to(device).float()
     matrix = matrix.view(1,test_utt.shape[0],test_utt.shape[-1])
@@ -75,7 +75,7 @@ for file in files:
         new_post[state,:] = new_frame
     
     encoded = np.transpose(new_post)    
-    filename = os.path.join(OUTDIR , file[:-4] + '.txt')
+    filename = os.path.join(OUTDIR, file[:-4] + '.txt')
     f2 = open(filename, 'a')
     for line in range(len(encoded)):
         vect = encoded[line]
