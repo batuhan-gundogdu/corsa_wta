@@ -184,8 +184,6 @@ def train_disc(x, z,
     optimizer_enc.step()
     optimizer_disc.step()
 
-    
-
 def train_sa(x, y, z, 
              encoder, decoder, discriminator, 
              decoder_criterion, discriminator_criterion, 
@@ -219,4 +217,3 @@ def train_sa(x, y, z,
     optimizer_disc.step()
     
     return decoder_loss.item(), discriminator_loss.item()
-    
